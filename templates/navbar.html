@@ -13,7 +13,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-                <a class="nav-link" href="#">Vacancies</a>
+                <a class="nav-link" href="{% url 'vacancies' %}">Vacancies</a>
             </li>
         </ul>
 
@@ -21,6 +21,10 @@
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
+        {% if user.is_employer %}
+            <a href="{% url 'create_vacancy' %}" class="btn btn-primary active" role="button" aria-pressed="true">Create
+                Vacancy</a>
+        {% endif %}
     </div>
 
 
@@ -51,7 +55,7 @@
     </div>
 </nav>
 <style>
-    #search-form{
-        margin: 0;
+    .search-form {
+        margin: 0 5px 0 0;
     }
 </style>

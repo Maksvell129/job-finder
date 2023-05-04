@@ -2,8 +2,6 @@ from datetime import date
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 
@@ -34,7 +32,7 @@ class Organization(models.Model):
 class Employer(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='employer')
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name='employers', null=True)
-
-    @receiver(post_save, sender=CustomUser)
-    def save_user_profile(sender, instance, **kwargs):
-        instance.profile.save()
+    #
+    # @receiver(post_save, sender=CustomUser)
+    # def save_user_profile(sender, instance, **kwargs):
+    #     instance.profile.save()
