@@ -21,6 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-vl=3#my8+u2xz%hgy_2ah8@=(@svg3+xt6-m4h055%vo9*3!p0'
 
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+LOGIN_URL = 'login'
+
+LOGOUT_URL = 'logout'
+
+LOGIN_REDIRECT_URL = 'home'
+
+LOGOUT_REDIRECT_URL = 'home'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -37,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'accounts',
+
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [
@@ -112,6 +124,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
