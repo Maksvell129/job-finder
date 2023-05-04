@@ -14,25 +14,27 @@
     <div class="row justify-content-center">
         <div class="col-lg-4 col-md-6 col-sm-8 col-12">
             <form method="post" novalidate class="login-form">
-                            <h2 class="mb-3">Log in</h2>
+                <h2 class="mb-3">Log in</h2>
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ next }}">
                 <div class="mb-4">
-                <div class="form-group">
-                    <label for="{{ form.email.id_for_label }}" class="form-label">Email:</label>
-                    {{ form.username }}
-                </div>
+                    <div class="form-group">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Email:</label>
+                        {{ form.username }}
+                    </div>
                 </div>
                 <div class="mb-4">
-                <div class="form-group">
-                    <label for="{{ form.password.id_for_label }}" class="form-label">Password:</label>
-                    {{ form.password }}
-                </div>
+                    <div class="form-group">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">Password:</label>
+                        {{ form.password }}
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block login-form-button">Log in</button>
+                <div id="formFooter">
+                <a class="underlineHover"
+                   href="{% url 'signup' %}">Don't have account? Register</a>
+            </div>
             </form>
-
-
         </div>
     </div>
     <style>

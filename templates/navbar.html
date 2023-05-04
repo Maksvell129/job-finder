@@ -44,8 +44,8 @@
 
 
         {% else %}
-            <a href="" type="button" class="btn float-right">Sign Up</a>
-            <a href="" type="button" class="btn float-right">Sign In</a>
+            <a href="{% url 'signup' %}" type="button" class="btn float-right">Sign Up</a>
+            <a href="{% url 'login' %}" type="button" class="btn float-right">Sign In</a>
 
         {% endif %}
     </div>
