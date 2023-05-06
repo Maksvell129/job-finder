@@ -15,15 +15,28 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'vacancies' %}">Vacancies</a>
             </li>
+
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    {% if  user.is_employer %}
+                        <a class="nav-link" href="{% url 'applications_for_employer' %}">Application</a>
+                    {% else %}
+                        <a class="nav-link" href="{% url 'applications_for_applicant' %}">Application</a>
+                    {% endif %}
+                </li>
+            {% endif %}
         </ul>
+
 
         <form class="d-flex search-form" role="search" style="margin: 0;">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
-        {% if user.is_employer %}
-            <a href="{% url 'create_vacancy' %}" class="btn btn-primary active" role="button" aria-pressed="true">Create
-                Vacancy</a>
+        {% if user.is_authenticated %}
+            {% if user.is_employer %}
+                <a href="{% url 'create_vacancy' %}" class="btn btn-primary active" role="button" aria-pressed="true">Create
+                    Vacancy</a>
+            {% endif %}
         {% endif %}
     </div>
 

@@ -6,6 +6,7 @@
         {% for vacancy in object_list %}
             <li>
                 <h2><a href="{% url 'vacancy_detail' pk=vacancy.pk %}">{{ vacancy.title }}</a></h2>
+                <p>Organization : {{ vacancy.organization.name }}</p>
                 <p>Salary: {{ vacancy.salary }}</p>
                 <p>{{ vacancy.description }}</p>
                 {% if user.is_authenticated and not user.is_employer %}

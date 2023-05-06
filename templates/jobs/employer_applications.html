@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Applications</h1>
+
+    <h2>Pending Applications</h2>
+    {% if pending_applications %}
+        <ul>
+            {% for application in pending_applications %}
+                <li>{{ application.vacancy.title }} - {{ application.status }}</li>
+                <form method="post" action="{% url 'change_application_status' application.id %}">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="reject">Reject</button>
+                    <button type="submit" name="action" value="approve">Approve</button>
+                </form>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No pending applications found.</p>
+    {% endif %}
+
+    <h2>Approved/Rejected Applications</h2>
+    {% if reviewed_applications %}
+        <ul>
+            {% for application in reviewed_applications %}
+                <li>{{ application.vacancy.title }} - {{ application.status }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No approved or rejected applications found.</p>
+    {% endif %}
+{% endblock %}
