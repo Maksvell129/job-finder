@@ -1,8 +1,11 @@
 from django.contrib.auth import get_user_model, login
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.generic import CreateView, TemplateView
 
-from accounts.forms import ApplicantSignUpForm, EmployerSignUpForm
+from accounts.forms import ApplicantSignUpForm, EmployerSignUpForm, EmployerEditForm, UserEditForm
 
 User = get_user_model()
 
@@ -43,3 +46,23 @@ class EmployerSignUpView(CreateView):
         user = form.save()
         login(self.request, user)
         return redirect('home')
+
+
+@method_decorator(login_required, name='dispatch')
+class ProfileView(View):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_employer:
+            form = EmployerEditForm(instance=request.user)
+        else:
+            form = UserEditForm(instance=request.user)
+        return render(request, 'accounts/profile.html', {'user_form': form, 'employer_form': form})
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_employer:
+            form = EmployerEditForm(request.POST, instance=request.user)
+        else:
+            form = UserEditForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+        return render(request, 'accounts/profile.html', {'user_form': form, 'employer_form': form})
