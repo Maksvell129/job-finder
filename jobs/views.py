@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, ListView, DetailView, View, UpdateView
+from django.views.generic import CreateView, ListView, DetailView, View, UpdateView, DeleteView
 from django.contrib import messages
 
 from accounts.mixins import EmployerRequiredMixin, ApplicantRequiredMixin
@@ -58,6 +58,26 @@ class VacancyCreateView(LoginRequiredMixin, EmployerRequiredMixin, CreateView):
 class VacancyDetailView(DetailView):
     model = Vacancy
     template_name = 'jobs/vacancy_detail.html'
+
+
+class VacancyDeleteView(UserPassesTestMixin, DeleteView):
+    model = Vacancy
+    success_url = reverse_lazy('employer_vacancies')
+
+    def test_func(self):
+        vacancy = self.get_object()
+        return self.request.user == vacancy.created_by
+
+    def form_valid(self, form):
+        # получаем объект вакансии
+        vacancy = self.get_object()
+        # сохраняем название вакансии для последующего использования в сообщении
+        title = vacancy.title
+        # вызываем метод удаления вакансии
+        vacancy.delete()
+        # добавляем сообщение об успешном удалении вакансии в контекст
+        messages.success(self.request, f'The "{title}" vacancy has been deleted.')
+        return super().form_valid(form)
 
 
 @method_decorator(login_required, name='dispatch')
