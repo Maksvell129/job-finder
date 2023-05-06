@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -8,7 +9,7 @@ from django.views.generic import CreateView, ListView, DetailView, View, UpdateV
 from django.contrib import messages
 
 from accounts.mixins import EmployerRequiredMixin, ApplicantRequiredMixin
-from jobs.forms import VacancyForm
+from jobs.forms import VacancyForm, VacancySearchForm
 from jobs.models import Vacancy, Application
 
 
@@ -17,7 +18,29 @@ class VacancyListView(ListView):
     template_name = 'jobs/vacancy_list.html'
 
     def get_queryset(self):
-        return Vacancy.objects.all()
+        qs = Vacancy.objects.all()
+
+        form = VacancySearchForm(self.request.GET)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            location = form.cleaned_data['location']
+            min_salary = form.cleaned_data['min_salary']
+
+            if query:
+                qs = qs.filter(Q(title__icontains=query) | Q(description__icontains=query))
+
+            if location:
+                qs = qs.filter(location__icontains=location)
+
+            if min_salary:
+                qs = qs.filter(salary__gte=min_salary)
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_form'] = VacancySearchForm(self.request.GET)
+        return context
 
 
 class VacancyCreateView(LoginRequiredMixin, EmployerRequiredMixin, CreateView):
