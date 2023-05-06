@@ -148,3 +148,23 @@ class ApplicationsChangeStatusView(LoginRequiredMixin, EmployerRequiredMixin, Vi
 
         application.save()
         return redirect('applications_for_employer')
+
+
+class ToggleFavoriteVacancyView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        vacancy = get_object_or_404(Vacancy, pk=pk)
+        user = request.user
+        if vacancy in user.favorite_vacancies.all():
+            user.favorite_vacancies.remove(vacancy)
+        else:
+            user.favorite_vacancies.add(vacancy)
+        return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+
+class FavoriteVacanciesListView(LoginRequiredMixin, ListView):
+    model = Vacancy
+    template_name = 'jobs/favorite_vacancies.html'
+
+    def get_queryset(self):
+        vacancies = self.request.user.favorite_vacancies.all()
+        return vacancies

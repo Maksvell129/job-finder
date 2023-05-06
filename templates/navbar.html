@@ -19,22 +19,28 @@
             {% if user.is_authenticated %}
                 <li class="nav-item">
                     {% if  user.is_employer %}
-                        <a class="nav-link" href="{% url 'applications_for_employer' %}">Application</a>
+                        <a class="nav-link" href="{% url 'applications_for_employer' %}">Applications</a>
                     {% else %}
-                        <a class="nav-link" href="{% url 'applications_for_applicant' %}">Application</a>
+                        <a class="nav-link" href="{% url 'applications_for_applicant' %}">Applications</a>
                     {% endif %}
                 </li>
             {% endif %}
-            {% if user.is_authenticated and user.is_employer%}
+            {% if user.is_authenticated and user.is_employer %}
                 <li class="nav-item">
-                <a class="nav-link" href="{% url 'employer_vacancies' %}">My Vacancies</a>
-            </li>
+                    <a class="nav-link" href="{% url 'employer_vacancies' %}">My Vacancies</a>
+                </li>
+            {% endif %}
+            {% if user.is_authenticated%}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'favorites_vacancies' %}">Favorite</a>
+                </li>
             {% endif %}
         </ul>
 
 
         <form class="d-flex search-form" role="search" style="margin: 0;" method="get" action="{% url 'vacancies' %}">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query" aria-placeholder="Search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query"
+                   aria-placeholder="Search">
             <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
         {% if user.is_authenticated %}

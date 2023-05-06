@@ -12,6 +12,9 @@ class CustomUser(AbstractUser):
     date_of_birth = models.DateField()
     is_employer = models.BooleanField(default=False)
 
+    favorite_vacancies = models.ManyToManyField('jobs.Vacancy', blank=True, through='FavoriteVacancy',
+                                                related_name='favorited_by')
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
@@ -32,7 +35,12 @@ class Organization(models.Model):
 class Employer(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='employer')
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name='employers', null=True)
-    #
-    # @receiver(post_save, sender=CustomUser)
-    # def save_user_profile(sender, instance, **kwargs):
-    #     instance.profile.save()
+
+
+class FavoriteVacancy(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    vacancy = models.ForeignKey('jobs.Vacancy', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
