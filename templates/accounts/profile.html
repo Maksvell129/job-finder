@@ -2,17 +2,9 @@
 
 {% block content %}
     <h1>Profile</h1>
-    {% if user.is_employer %}
         <form method="post">
             {% csrf_token %}
-            {{ employer_form.as_p }}
+            {{ form.as_p }}
             <input type="submit" value="Save">
         </form>
-    {% else %}
-        <form method="post">
-            {% csrf_token %}
-            {{ user_form.as_p }}
-            <input type="submit" value="Save">
-        </form>
-    {% endif %}
 {% endblock %}
