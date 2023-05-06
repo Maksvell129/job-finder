@@ -4,7 +4,7 @@ from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, ListView, DetailView, View
+from django.views.generic import CreateView, ListView, DetailView, View, UpdateView
 from django.contrib import messages
 
 from accounts.mixins import EmployerRequiredMixin, ApplicantRequiredMixin
@@ -53,6 +53,23 @@ class ApplicationCreateView(View):
         )
         messages.success(request, 'You have successfully applied for the vacancy')
         return redirect('vacancy_detail', pk=vacancy.pk)
+
+
+class EmployerVacancyListView(LoginRequiredMixin, EmployerRequiredMixin, ListView):
+    model = Vacancy
+    template_name = 'jobs/employer_vacancies.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        vacancies = Vacancy.objects.filter(organization=user.employer.organization)
+        return vacancies
+
+
+class VacancyUpdateView(EmployerRequiredMixin, UpdateView):
+    model = Vacancy
+    form_class = VacancyForm
+    template_name = 'jobs/vacancy_form.html'
+    success_url = reverse_lazy('employer_vacancies')
 
 
 class EmployerApplicationListView(EmployerRequiredMixin, ListView):

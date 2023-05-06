@@ -25,6 +25,11 @@
                     {% endif %}
                 </li>
             {% endif %}
+            {% if user.is_authenticated and user.is_employer%}
+                <li class="nav-item">
+                <a class="nav-link" href="{% url 'employer_vacancies' %}">My Vacancies</a>
+            </li>
+            {% endif %}
         </ul>
 
 
