@@ -5,7 +5,7 @@ from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, ListView, DetailView, View, UpdateView, DeleteView
+from django.views.generic import CreateView, ListView, DetailView, View, UpdateView, DeleteView, TemplateView
 from django.contrib import messages
 
 from accounts.mixins import EmployerRequiredMixin, ApplicantRequiredMixin
@@ -18,7 +18,7 @@ class VacancyListView(ListView):
     template_name = 'jobs/vacancy_list.html'
 
     def get_queryset(self):
-        qs = Vacancy.objects.all()
+        qs = Vacancy.objects.filter(status='published')
 
         form = VacancySearchForm(self.request.GET)
         if form.is_valid():
@@ -90,11 +90,14 @@ class ApplicationCreateView(View):
             messages.error(request, 'You have already applied to this vacancy')
             return redirect('vacancy_detail', pk=vacancy.pk)
 
+        message = request.POST.get('message', '')
+
         Application.objects.create(
             applicant=self.request.user,
-            vacancy=vacancy
+            vacancy=vacancy,
+            message=message,
         )
-        messages.success(request, 'You have successfully applied for the vacancy')
+        messages.success(request, f'You have successfully applied for the vacancy: {vacancy.title}')
         return redirect('vacancy_detail', pk=vacancy.pk)
 
 
@@ -147,6 +150,7 @@ class ApplicantApplicationListView(ApplicantRequiredMixin, ListView):
 class ApplicationsChangeStatusView(LoginRequiredMixin, EmployerRequiredMixin, View):
     def post(self, request, application_id):
         action = request.POST.get('action')
+        message = request.POST.get('message')
 
         if not (application_id and action):
             return HttpResponseBadRequest('Invalid request')
@@ -166,6 +170,16 @@ class ApplicationsChangeStatusView(LoginRequiredMixin, EmployerRequiredMixin, Vi
         else:
             return HttpResponseBadRequest('Invalid action')
 
+        from django.core.mail import send_mail
+        from django.conf import settings
+
+        subject = 'Thank you for registering to our site'
+        message = ' it  means a world to us '
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = ['saykovskiy.maks03@gmail.com', ]
+        send_mail(subject, message, email_from, recipient_list)
+
+        application.response_message = message
         application.save()
         return redirect('applications_for_employer')
 
@@ -186,5 +200,9 @@ class FavoriteVacanciesListView(LoginRequiredMixin, ListView):
     template_name = 'jobs/favorite_vacancies.html'
 
     def get_queryset(self):
-        vacancies = self.request.user.favorite_vacancies.all()
+        vacancies = self.request.user.favorite_vacancies.filter(status='published')
         return vacancies
+
+
+class SearchView(TemplateView):
+    template_name = "jobs/search.html"

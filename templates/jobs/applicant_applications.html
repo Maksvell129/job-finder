@@ -2,10 +2,22 @@
 {% block content %}
     <h1>Applications</h1>
     <ul>
-    {% for application in object_list %}
-        <li>{{ application.vacancy.title }} - {{ application.status }}</li>
-    {% empty %}
-        <li>No applications found.</li>
-    {% endfor %}
+        {% for application in object_list %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <br>{{ application.vacancy.title }}
+                {% if application.response_message %}
+                    <br>Response message: {{ application.response_message }}
+                {% endif %}
+                {% if application.status == 'rejected' %}
+                    <span class="badge badge-danger badge-pill">Rejected</span>
+                {% elif application.status == 'approved' %}
+                    <span class="badge badge-success badge-pill">Approved</span>
+                {% else %}
+                    <span class="badge badge-warning badge-pill">Pending</span>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>No applications found.</li>
+        {% endfor %}
     </ul>
 {% endblock %}

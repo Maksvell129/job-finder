@@ -37,6 +37,18 @@ class Application(models.Model):
     vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, related_name='responses')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
+    message = models.TextField(default='')
+    response_message = models.TextField(default='')
 
     def __str__(self):
         return str(self.applicant)
+
+#
+# class ApplicationResponse(models.Model):
+#     application = models.ForeignKey(Application, on_delete=models.CASCADE, related_name='responses')
+#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+#     message = models.TextField()
+#     created_at = models.DateTimeField(auto_now_add=True)
+#
+#     def __str__(self):
+#         return f"{self.sender} - {self.message}"

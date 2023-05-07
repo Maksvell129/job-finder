@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div style="
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px;
+    width: 80%;
+height: 30%">
+        <h1 style="text-align: center">Search</h1>
+        <form class="input-group" method="get" action="{% url 'vacancies' %}">
+            <input type="search" class="form-control rounded" placeholder="Give us some information..." aria-label="Search"
+                   aria-describedby="search-addon" name="query"/>
+            <button type="submit" class="btn btn-outline-primary">Search</button>
+        </form>
+
+    </div>
+
+
+{% endblock %}

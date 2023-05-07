@@ -10,28 +10,62 @@
                 {% if pending_applications %}
                     <ul class="list-group">
                         {% for application in pending_applications %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                {{ application.vacancy.title }}
-                                {{ application.applicant.username }}
-                                <span class="badge badge-primary badge-pill">{{ application.status }}</span>
-
-                                <div class="form-group">
-                                    <label>Resume:</label>
-                                    <a href="{{ application.applicant.resume.url }}"
-                                       target="_blank">Link</a>
-                                </div>
-
-                                <form method="post" action="{% url 'change_application_status' application.id %}">
-                                    {% csrf_token %}
-                                    <div class="btn-group" role="group">
-                                        <button type="submit" class="btn btn-danger" name="action" value="reject">
-                                            Reject
-                                        </button>
-                                        <button type="submit" class="btn btn-success" name="action" value="approve">
-                                            Approve
-                                        </button>
+                            <li class="border p-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5>{{ application.vacancy.title }}</h5>
+                                    <p>
+                                        <strong>Candidate:</strong> {{ application.applicant.first_name }} {{ application.applicant.last_name }}
+                                    </p>
+                                    <p><i class="fa fa-envelope"></i> {{ application.applicant.email }}</p>
+                                    <p><i class="fa fa-phone"></i> {{ application.applicant.phone_number }}</p>
+                                    {% if application.message %}
+                                        <p><i class="fa fa-comment"></i> {{ application.message }}</p>
+                                    {% endif %}
+                                    <div class="form-group">
+                                        <label>Resume:</label>
+                                        <a href="{{ application.applicant.resume.url }}" target="_blank">Link</a>
                                     </div>
-                                </form>
+                                </div>
+                                <div class="form-group">
+                                    <form method="post" action="{% url 'change_application_status' application.id %}">
+                                        {% csrf_token %}
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                    data-target="#confirmModal">
+                                                Response
+                                            </button>
+                                        </div>
+                                        <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog"
+                                             aria-labelledby="confirmModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="confirmModalLabel">Confirm
+                                                            Action</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <textarea name="message" rows="5" class="form-control"
+                                                                  placeholder="Enter your message"></textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" name="action" value="reject"
+                                                                class="btn btn-danger">
+                                                            Reject
+                                                        </button>
+                                                        <button type="submit" name="action" value="approve"
+                                                                class="btn btn-success">
+                                                            Approve
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </li>
                         {% endfor %}
                     </ul>
@@ -40,14 +74,24 @@
                 {% endif %}
             </div>
 
+
             <div class="col-md-6">
                 <h2>Approved/Rejected Applications</h2>
                 {% if reviewed_applications %}
                     <ul class="list-group">
                         {% for application in reviewed_applications %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                {{ application.vacancy.title }}
-                                <span class="badge badge-primary badge-pill">{{ application.status }}</span>
+                                {{ application.applicant.first_name }} {{ application.applicant.last_name }}
+                                <br>{{ application.applicant.email }}, {{ application.applicant.phone_number }}
+                                <br>{{ application.vacancy.title }}
+                                {% if application.response_message %}
+                                    <br>Response message: {{ application.response_message }}
+                                {% endif %}
+                                {% if application.status == 'rejected' %}
+                                    <span class="badge badge-danger badge-pill">Rejected</span>
+                                {% else %}
+                                    <span class="badge badge-success badge-pill">Approved</span>
+                                {% endif %}
                             </li>
                         {% endfor %}
                     </ul>
