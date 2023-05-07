@@ -11,6 +11,7 @@ from django.contrib import messages
 from accounts.mixins import EmployerRequiredMixin, ApplicantRequiredMixin
 from jobs.forms import VacancyForm, VacancySearchForm
 from jobs.models import Vacancy, Application
+from emails import EmailService
 
 
 class VacancyListView(ListView):
@@ -170,14 +171,7 @@ class ApplicationsChangeStatusView(LoginRequiredMixin, EmployerRequiredMixin, Vi
         else:
             return HttpResponseBadRequest('Invalid action')
 
-        from django.core.mail import send_mail
-        from django.conf import settings
-
-        subject = 'Thank you for registering to our site'
-        message = ' it  means a world to us '
-        email_from = settings.EMAIL_HOST_USER
-        recipient_list = ['saykovskiy.maks03@gmail.com', ]
-        send_mail(subject, message, email_from, recipient_list)
+        EmailService.send_application_response(application.vacancy.title, action, message, application.applicant.email)
 
         application.response_message = message
         application.save()
