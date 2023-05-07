@@ -1,12 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Favorite Vacancies</h1>
-<ul>
-    {% for vacancy in object_list %}
-        <li><a href="{% url 'vacancy_detail' pk=vacancy.pk %}">{{ vacancy.title }}</a></li>
-    {% empty %}
-    <li>No vacancies found.</li>
-    {% endfor %}
-</ul>
+    <div class="container">
+        <h1 class="my-4">Favorite Vacancies</h1>
+        <!-- Используем таблицу Bootstrap для отображения вакансий -->
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Organization</th>
+                <th>Description</th>
+                <th>Favorite</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for vacancy in object_list %}
+                <tr>
+                    <td><a href="{% url 'vacancy_detail' pk=vacancy.pk %}">{{ vacancy.title }}</a></td>
+                    <td>{{ vacancy.created_by.employer.organization.name }}</td>
+                    <td>{{ vacancy.description }}</td>
+                    <td>
+                        <form action="{% url 'vacancy_favorite' pk=vacancy.pk %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-warning">
+                                <span>Remove</span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">No vacancies found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
