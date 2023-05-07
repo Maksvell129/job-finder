@@ -80,7 +80,7 @@
                 {% if reviewed_applications %}
                     <ul class="list-group">
                         {% for application in reviewed_applications %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <li class="border p-3 list-group-item d-flex justify-content-between align-items-center">
                                 {{ application.applicant.first_name }} {{ application.applicant.last_name }}
                                 <br>{{ application.applicant.email }}, {{ application.applicant.phone_number }}
                                 <br>{{ application.vacancy.title }}

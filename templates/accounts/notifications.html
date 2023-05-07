@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+    <div class="container">
+        <!-- Flash massages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} text-center"
+                     role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+
+
+        <div class="row my-2 justify-content-center">
+            <div class="col-sm">
+                <div class="card p-3 shadow rounded-3">
+                    <div class="card-body pb-0">
+                        <h5 class="page-title text-muted mb-2">{% trans "Notifications" %}</h5>
+                        <div class="d-flex flex-row bd-highlight">
+                            <div class="mr-3 bd-highlight ms-auto">
+                                <a class="link-secondary"
+                                   href="{% url 'delete_read_notifications' %}">
+                                    {% trans "Delete all read notifications" %}
+                                </a>
+                            </div>
+                            <div class="mr-3 bd-highlight">
+                                <a class="link-secondary"
+                                   href="{% url 'mark_all_as_read' %}">
+                                    {% trans "Mark all as read" %}
+                                </a>
+                            </div>
+                            <div class="mr-1 bd-highlight">
+                                <a class="link-secondary" href="{% url 'user_unread_notifications' %}">
+                                    {% trans "Only show unread" %}
+                                </a>
+                            </div>
+                        </div>
+                        <hr class="my-3"> <!-- dividing line -->
+
+                        {% for notification in notifications %}
+
+                            <div class="card {% if notification.status == notification.UNREAD %}border-secondary{% endif %} mb-2"
+                                 id="id_notification_{{ notification.id }}">
+
+                                <div class="card-body">
+                                    <div class="row">
+
+                                        <div class="col-md-10">
+                                            <h6 class="card-title notification_card">{{ notification.message|capfirst|truncatechars:120 }}</h6>
+                                            <h6 class="card-subtitle mb-2 text-muted">
+                                                <small>Created {{ notification.created_at|timesince }} ago</small></h6>
+                                            <p class="card-text"><small>
+                                                {% if notification.vacancy.title %}
+                                                    Vacancy: "{{ notification.vacancy.title }}"
+                                                    <br>
+                                                {% endif %}
+                                                {% if notification.sender.username %}
+                                                    User: "{{ notification.sender.first_name }}
+                                                    {{ notification.sender.last_name }}"
+                                                    <br>
+                                                {% endif %}
+                                            </small></p>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="d-flex flex-column bd-highlight text-right">
+                                                <div class="p-1 bd-highlight">
+                                                    {% if user.is_employer %}
+                                                        <a href="{% url 'applications_for_employer' %}"
+                                                           class="card-link text-dark">
+                                                            Go to applications
+                                                        </a>
+                                                    {% else %}
+                                                        <a href="{% url 'applications_for_applicant' %}"
+                                                           class="card-link text-dark">
+                                                            Go to applications
+                                                        </a>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="p-1 bd-highlight">
+                                                    <a href="{% url 'change_notification_status' notification.id %}"
+                                                       class="card-link text-muted">
+                                                        {% if notification.status == notification.UNREAD %}Mark as
+                                                            read{% else %}Mark as unread{% endif %}
+                                                    </a>
+                                                </div>
+                                                <div class="p-1 bd-highlight">
+                                                    <a href="{% url 'delete_notification' notification.id %}"
+                                                       class="card-link text-danger">
+                                                        Delete
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div> <!-- end card-body-->
+                </div> <!-- end card -->
+            </div> <!-- end col -->
+        </div> <!-- end row -->
+
+    </div>
+
+{% endblock %}

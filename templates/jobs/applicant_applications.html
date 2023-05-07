@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
+    <div class="container">
     <h1>Applications</h1>
-    <ul>
-        {% for application in object_list %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <br>{{ application.vacancy.title }}
+    <ul class="list-group">
+    {% for application in object_list %}
+        <li class="list-group-item border p-3 d-flex justify-content-between align-items-center">
+            <div>
+                <small class="text-muted">Created {{ application.created_at|timesince }} ago</small>
+                <h5 class="mt-2 mb-1">{{ application.vacancy.title }}</h5>
                 {% if application.response_message %}
-                    <br>Response message: {{ application.response_message }}
+                    <p class="mb-1">Response message: {{ application.response_message }}</p>
                 {% endif %}
+            </div>
+            <div>
                 {% if application.status == 'rejected' %}
                     <span class="badge badge-danger badge-pill">Rejected</span>
                 {% elif application.status == 'approved' %}
@@ -15,9 +20,11 @@
                 {% else %}
                     <span class="badge badge-warning badge-pill">Pending</span>
                 {% endif %}
-            </li>
-        {% empty %}
-            <li>No applications found.</li>
-        {% endfor %}
-    </ul>
+            </div>
+        </li>
+    {% empty %}
+        <li class="list-group-item">No applications found.</li>
+    {% endfor %}
+</ul>
+</div>
 {% endblock %}

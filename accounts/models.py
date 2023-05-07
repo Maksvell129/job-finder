@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.db import models
+from django.db.models import CASCADE
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
@@ -45,3 +46,21 @@ class FavoriteVacancy(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+
+class UserNotification(models.Model):
+    UNREAD = 1
+    READ = 2
+
+    STATUS = [
+        (UNREAD, 'UNREAD'),
+        (READ, 'READ'),
+    ]
+
+    message = models.TextField(max_length=1024)
+    status = models.IntegerField(choices=STATUS, default=UNREAD)
+    recipient = models.ForeignKey(CustomUser, on_delete=CASCADE, related_name='recipient_notifications')
+    sender = models.ForeignKey(CustomUser, on_delete=CASCADE, related_name='sender_notifications', null=True)
+    vacancy = models.ForeignKey('jobs.Vacancy', on_delete=CASCADE, related_name='notifications', null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(CustomUser, on_delete=CASCADE, related_name='notifications', null=True)

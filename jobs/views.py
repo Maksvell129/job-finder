@@ -9,6 +9,7 @@ from django.views.generic import CreateView, ListView, DetailView, View, UpdateV
 from django.contrib import messages
 
 from accounts.mixins import EmployerRequiredMixin, ApplicantRequiredMixin
+from accounts.services import NotificationsService
 from jobs.forms import VacancyForm, VacancySearchForm
 from jobs.models import Vacancy, Application
 from emails import EmailService
@@ -99,6 +100,14 @@ class ApplicationCreateView(View):
             message=message,
         )
         messages.success(request, f'You have successfully applied for the vacancy: {vacancy.title}')
+
+        NotificationsService.create_notification_for_user(
+            recipient=vacancy.created_by,
+            message=f"{request.user.first_name} {request.user.last_name} applied to vacancy: {vacancy.title}",
+            vacancy=vacancy,
+            sender=self.request.user,
+        )
+
         return redirect('vacancy_detail', pk=vacancy.pk)
 
 
@@ -145,7 +154,7 @@ class ApplicantApplicationListView(ApplicantRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        return Application.objects.filter(applicant=user)
+        return Application.objects.filter(applicant=user).order_by('-created_at')
 
 
 class ApplicationsChangeStatusView(LoginRequiredMixin, EmployerRequiredMixin, View):
@@ -172,6 +181,14 @@ class ApplicationsChangeStatusView(LoginRequiredMixin, EmployerRequiredMixin, Vi
             return HttpResponseBadRequest('Invalid action')
 
         EmailService.send_application_response(application.vacancy.title, action, message, application.applicant.email)
+
+        NotificationsService.create_notification_for_user(
+            recipient=application.applicant,
+            message=f"{request.user.first_name} {request.user.last_name} replied "
+                    f"to you about vacancy: {application.vacancy.title}",
+            vacancy=application.vacancy,
+            sender=self.request.user,
+        )
 
         application.response_message = message
         application.save()
