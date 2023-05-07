@@ -55,14 +55,16 @@ class ProfileView(View):
             form = EmployerEditForm(instance=request.user)
         else:
             form = UserEditForm(instance=request.user)
-        return render(request, 'accounts/profile.html', {'form': form})
+        context = {'form': form}
+        return render(request, 'accounts/profile.html', context)
 
     def post(self, request, *args, **kwargs):
         if request.user.is_employer:
-            form = EmployerEditForm(request.POST, instance=request.user)
+            form = EmployerEditForm(request.POST, request.FILES, instance=request.user)
         else:
-            form = UserEditForm(request.POST, instance=request.user)
+            form = UserEditForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
             return redirect('profile')
-        return render(request, 'accounts/profile.html', {'form': form})
+        context = {'form': form}
+        return render(request, 'accounts/profile.html', context)

@@ -12,12 +12,24 @@
                         {% for application in pending_applications %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 {{ application.vacancy.title }}
+                                {{ application.applicant.username }}
                                 <span class="badge badge-primary badge-pill">{{ application.status }}</span>
+
+                                <div class="form-group">
+                                    <label>Resume:</label>
+                                    <a href="{{ application.applicant.resume.url }}"
+                                       target="_blank">Link</a>
+                                </div>
+
                                 <form method="post" action="{% url 'change_application_status' application.id %}">
                                     {% csrf_token %}
                                     <div class="btn-group" role="group">
-                                        <button type="submit" class="btn btn-danger" name="action" value="reject">Reject</button>
-                                        <button type="submit" class="btn btn-success" name="action" value="approve">Approve</button>
+                                        <button type="submit" class="btn btn-danger" name="action" value="reject">
+                                            Reject
+                                        </button>
+                                        <button type="submit" class="btn btn-success" name="action" value="approve">
+                                            Approve
+                                        </button>
                                     </div>
                                 </form>
                             </li>
@@ -45,24 +57,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block extra_css %}
-    <style>
-        .list-group-item {
-            margin-bottom: 10px;
-        }
-
-        .badge-primary {
-            background-color: #007bff;
-        }
-
-        .badge-success {
-            background-color: #28a745;
-        }
-
-        .badge-danger {
-            background-color: #dc3545;
-        }
-    </style>
 {% endblock %}

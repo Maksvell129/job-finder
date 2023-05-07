@@ -108,9 +108,11 @@ class UserEditForm(forms.ModelForm):
                                     label='Phone Number', required=True, )
     date_of_birth = forms.DateField(label='Date of birth', widget=BootstrapDateInput())
 
+    resume = forms.FileField(label='Upload resume', required=False)
+
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'date_of_birth']
+        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'date_of_birth', 'resume']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -14,6 +14,7 @@ class CustomUser(AbstractUser):
 
     favorite_vacancies = models.ManyToManyField('jobs.Vacancy', blank=True, through='FavoriteVacancy',
                                                 related_name='favorited_by')
+    resume = models.FileField(upload_to='resume/', null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
