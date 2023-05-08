@@ -86,6 +86,11 @@
                     <li>
                         <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
                     </li>
+                    {% if user.is_staff %}
+                        <li>
+                            <a class="dropdown-item" href="admin/">Admin</a>
+                        </li>
+                    {% endif %}
                     <li>
                         <a class="dropdown-item" href="{% url 'logout' %}">Sign Out</a>
                     </li>
