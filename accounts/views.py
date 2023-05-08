@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -67,7 +69,11 @@ class ProfileView(View):
         else:
             form = UserEditForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            if 'resume' in form.changed_data:
+                old_resume_path = request.user.resume.path
+                os.remove(old_resume_path)
+            user.save()
             return redirect('profile')
         context = {'form': form}
         return render(request, 'accounts/profile.html', context)
