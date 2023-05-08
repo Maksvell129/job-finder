@@ -94,7 +94,18 @@
 
 
         {% else %}
-            <a href="{% url 'signup' %}" type="button" class="btn float-right">Sign Up</a>
+            <div class="btn-group">
+                <a href="{% url 'signup' %}" type="button" class="btn float-right">Sign Up</a>
+                <button type="button" class="btn float-right dropdown-toggle dropdown-toggle-split"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'applicant_signup' %}">Sign Up as seeker</a>
+                    <a class="dropdown-item" href="{% url 'employer_signup' %}">Sign Up as employer</a>
+                </div>
+            </div>
+            {#            <a href="{% url 'signup' %}" type="button" class="btn float-right">Sign Up</a>#}
             <a href="{% url 'login' %}" type="button" class="btn float-right">Sign In</a>
 
         {% endif %}

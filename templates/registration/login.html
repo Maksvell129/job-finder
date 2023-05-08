@@ -14,7 +14,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-4 col-md-6 col-sm-8 col-12">
             <form method="post" novalidate class="login-form">
-                <h2 class="mb-3">Log in</h2>
+                <h2 class="mb-3 text-center">Log in</h2>
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ next }}">
                 <div class="mb-4">
@@ -30,13 +30,13 @@
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block login-form-button">Log in</button>
-                <div id="formFooter">
-                <a class="underlineHover"
-                   href="{% url 'signup' %}">Don't have account? Register</a>
-            </div>
+                <div class="text-center mt-3">
+                    <a class="underlineHover" href="{% url 'signup' %}">Don't have an account? Register</a>
+                </div>
             </form>
         </div>
     </div>
+
     <style>
         .login-form {
             max-width: 400px;
