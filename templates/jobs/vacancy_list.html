@@ -16,8 +16,24 @@
                 {% for vacancy in object_list %}
                     <div class="card mb-3">
                         <div class="card-body">
-                            <h2 class="card-title"><a
-                                    href="{% url 'vacancy_detail' pk=vacancy.pk %}">{{ vacancy.title }}</a></h2>
+                            <div class="card-header d-flex justify-content-between">
+                                <h1><a
+                                        href="{% url 'vacancy_detail' pk=vacancy.pk %}">{{ vacancy.title }}</a></h1>
+                                {% if user.is_authenticated %}
+                                    <form action="{% url "vacancy_favorite" pk=vacancy.id %}" method="POST">
+                                        {% csrf_token %}
+                                        {% if vacancy in user.favorite_vacancies.all %}
+                                            <button type="submit" class="btn">
+                                                <span style="font-size:200%;color:yellow;">&starf;</span>
+                                            </button>
+                                        {% else %}
+                                            <button type="submit" class="btn">
+                                                <span style="font-size:200%;color:gray;">&starf;</span>
+                                            </button>
+                                        {% endif %}
+                                    </form>
+                                {% endif %}
+                            </div>
                             <p class="card-text">Organization: {{ vacancy.organization.name }}</p>
                             <p class="card-text">Salary: {{ vacancy.salary }}</p>
                             <p class="card-text">{{ vacancy.description }}</p>
@@ -60,23 +76,6 @@
                                         </div>
                                     </form>
                                 {% endif %}
-                            {% endif %}
-                            {% if user.is_authenticated %}
-                                <!-- Employer view -->
-                                <form action="{% url "vacancy_favorite" pk=vacancy.id %}" method="POST">
-                                    {% csrf_token %}
-                                    {% if vacancy in user.favorite_vacancies.all %}
-                                        <button type="submit" class="btn">
-                                            {#                                            <span class="material-symbols-outlined">star</span>#}
-                                            <span style="font-size:300%;color:yellow;">&starf;</span>
-                                        </button>
-                                    {% else %}
-                                        <button type="submit" class="btn">
-                                            {#                                            <span class="material-symbols-outlined">star</span>#}
-                                            <span style="font-size:300%;color:gray;">&starf;</span>
-                                        </button>
-                                    {% endif %}
-                                </form>
                             {% endif %}
                         </div>
                     </div>

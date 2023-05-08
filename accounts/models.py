@@ -33,6 +33,9 @@ class Organization(models.Model):
     description = models.TextField()
     head = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='head_of_organization')
 
+    def __str__(self):
+        return self.name
+
 
 class Employer(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='employer')

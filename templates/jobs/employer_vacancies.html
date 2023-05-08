@@ -1,34 +1,45 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="container py-5">
-        <h1 class="text-center mb-4">My Vacancies</h1>
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10">
-                <ul class="list-group">
-                    {% for vacancy in object_list %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <a href="{% url 'vacancy_detail' vacancy.id %}"
-                               class="text-decoration-none text-dark">{{ vacancy.title }}</a>
-                            <div class="d-flex">
-                                <a href="{% url 'vacancy_edit' vacancy.id %}" class="btn btn-primary btn-sm me-2"><i
-                                        class="bi bi-pencil"></i> Edit</a>
-                                <form action="{% url 'vacancy_delete' vacancy.id %}" method="post" class="d-inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i>
-                                        Delete
-                                    </button>
-                                </form>
-                            </div>
-                        </li>
-                    {% empty %}
-                        <li class="list-group-item">No vacancies found.</li>
-                    {% endfor %}
-                </ul>
-                <a href="{% url 'create_vacancy' %}" class="btn btn-primary mt-3"><i class="bi bi-plus"></i> Create
-                    Vacancy</a>
-            </div>
+<div class="container py-5">
+    <h1 class="text-center mb-4">My Vacancies</h1>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <ul class="list-group">
+                {% for vacancy in object_list %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <a href="{% url 'vacancy_detail' vacancy.id %}"
+                           class="text-decoration-none text-dark">{{ vacancy.title }}</a>
+                        <div class="d-flex">
+                            <span class="badge
+                                {% if vacancy.status == 'draft' %}
+                                    badge-secondary
+                                {% elif vacancy.status == 'published' %}
+                                    badge-success
+                                {% elif vacancy.status == 'closed' %}
+                                    badge-danger
+                                {% endif %}
+                                badge-pill" style="margin-right: 2px">
+                                {{ vacancy.status|title }}
+                            </span>
+                            <a href="{% url 'vacancy_edit' vacancy.id %}" class="btn btn-primary btn-sm me-2"><i
+                                    class="bi bi-pencil"></i> Edit</a>
+                            <form action="{% url 'vacancy_delete' vacancy.id %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i>
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No vacancies found.</li>
+                {% endfor %}
+            </ul>
+            <a href="{% url 'create_vacancy' %}" class="btn btn-primary mt-3"><i class="bi bi-plus"></i> Create
+                Vacancy</a>
         </div>
     </div>
+</div>
 {% endblock %}
 

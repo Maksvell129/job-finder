@@ -1,64 +1,161 @@
 {% extends 'base.html' %}
 {% load vacancy_tags %}
 {% block content %}
-    <h1>{{ object.title }}</h1>
-    <p>Salary: {{ object.salary }}</p>
-    <p>{{ object.description }}</p>
-    {% if user.is_authenticated and not user.is_employer %}
-        {% if vacancy|has_applied:user %}
-            <p>Вы уже откликались на эту вакансию</p>
-        {% else %}
-            <form action="{% url 'apply_vacancy' vacancy.pk %}" method="POST">
-                {% csrf_token %}
-                <button type="button" class="btn btn-primary" data-toggle="modal"
-                        data-target="#confirmModal">
-                    Apply
-                </button>
-                <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog"
-                     aria-labelledby="confirmModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="confirmModalLabel">Confirm
-                                    Action</h5>
-                                <button type="button" class="close" data-dismiss="modal"
-                                        aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                                        <textarea name="message" rows="5" class="form-control"
-                                                                  placeholder="Enter your message"></textarea>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary"
-                                        data-dismiss="modal">Cancel
-                                </button>
-                                <button type="submit" name="action" value="apply"
-                                        class="btn btn-primary">Apply
-                                </button>
-                            </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <h1>{{ object.title }}</h1>
+                        {% if user.is_authenticated %}
+                            <form action="{% url "vacancy_favorite" pk=vacancy.id %}" method="POST">
+                                {% csrf_token %}
+                                {% if vacancy in user.favorite_vacancies.all %}
+                                    <button type="submit" class="btn">
+                                        <span style="font-size:200%;color:yellow;">&starf;</span>
+                                    </button>
+                                {% else %}
+                                    <button type="submit" class="btn">
+                                        <span style="font-size:200%;color:gray;">&starf;</span>
+                                    </button>
+                                {% endif %}
+                            </form>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <p>Salary: {{ object.salary }}</p>
+                        <p>{{ object.description }}</p>
+                        <p>{{ object.location }}</p>
+                    </div>
+                    <div class="card-footer">
+                        {% if user.is_authenticated and not user.is_employer %}
+                            {% if vacancy|has_applied:user %}
+                                <p>You have already applied for this job</p>
+                            {% else %}
+                                <form action="{% url 'apply_vacancy' vacancy.pk %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                            data-target="#confirmModal">Apply
+                                    </button>
+                                    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog"
+                                         aria-labelledby="confirmModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="confirmModalLabel">Confirm Action</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                  <textarea name="message" rows="5" class="form-control"
+                            placeholder="Enter your message"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Cancel
+                                                    </button>
+                                                    <button type="submit" name="action" value="apply"
+                                                            class="btn btn-primary">Apply
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 offset-md-2">
+                <div class="accordion">
+                    <div class="accordion-header collapsed" id="employer-info" data-toggle="collapse"
+                         data-target="#employer-collapse" aria-expanded="false" aria-controls="employer-collapse">
+                        <h5 class="mb-0 acc-btn" data-toggle="collapse">
+                            <span class="arrow-icon"></span>
+                            <button class="btn">
+                                Info about employer
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="employer-collapse" class="collapse" aria-labelledby="employer-info"
+                         data-parent=".accordion">
+                        <div class="accordion-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th colspan="2">Employer Info</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Name:</td>
+                                    <td>{{ object.created_by.first_name }} {{ object.created_by.last_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Email:</td>
+                                    <td>{{ object.created_by.email }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Phone Number:</td>
+                                    <td>{{ object.created_by.phone_number }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th colspan="2">Organization Info</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Name:</td>
+                                    <td>{{ object.created_by.employer.organization }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Address:</td>
+                                    <td>{{ object.created_by.employer.organization.address }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-            </form>
-        {% endif %}
-    {% endif %}
-    {% if user.is_authenticated %}
-        <!-- Employer view -->
-        <form action="{% url "vacancy_favorite" pk=vacancy.id %}" method="POST">
-            {% csrf_token %}
-            {% if vacancy in user.favorite_vacancies.all %}
-                <button type="submit" class="btn">
-                    {#                                            <span class="material-symbols-outlined">star</span>#}
-                    <span style="font-size:300%;color:yellow;">&starf;</span>
-                </button>
-            {% else %}
-                <button type="submit" class="btn">
-                    {#                                            <span class="material-symbols-outlined">star</span>#}
-                    <span style="font-size:300%;color:gray;">&starf;</span>
-                </button>
-            {% endif %}
-        </form>
-    {% endif %}
+            </div>
+
+        </div>
+    </div>
+    <style>
+        .accordion-header {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .accordion-header:hover {
+            background-color: #ddd;
+        }
+
+        .accordion-header::after {
+            content: '\2212';
+            color: #777;
+            font-weight: bold;
+        }
+
+        .accordion-header.collapsed::after {
+            content: "\002B";
+        }
+
+        .accordion-body {
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fff;
+        }
+
+
+    </style>
 {% endblock %}
